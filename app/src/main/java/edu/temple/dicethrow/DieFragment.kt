@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import kotlin.random.Random
 
 class DieFragment : Fragment() {
@@ -18,6 +19,8 @@ class DieFragment : Fragment() {
     private var dieSides: Int = 6
     private var currentRoll: Int? = null
 
+    lateinit var dieViewModel: DieViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -26,6 +29,7 @@ class DieFragment : Fragment() {
         savedInstanceState?.let {
             currentRoll = it.getInt(CURRENT_ROLL)
         }
+        dieViewModel = ViewModelProvider(this)[DieViewModel::class.java]
     }
 
 
@@ -41,19 +45,16 @@ class DieFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (currentRoll == null) {
-            throwDie()
-        } else {
-            dieTextView.text = currentRoll.toString()
+        dieViewModel.getCurrentRoll().observe(viewLifecycleOwner){
+            dieTextView.text = it.toString()
         }
 
-        view.setOnClickListener {
+        if (dieViewModel.getCurrentRoll().value == null)
             throwDie()
-        }
     }
 
     fun throwDie() {
-        currentRoll = Random.nextInt(dieSides) + 1
+        dieViewModel.setCurrentRoll(Random.nextInt(dieSides) + 1)
         dieTextView.text = currentRoll.toString()
     }
 
