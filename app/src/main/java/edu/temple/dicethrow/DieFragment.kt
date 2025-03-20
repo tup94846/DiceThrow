@@ -29,7 +29,7 @@ class DieFragment : Fragment() {
         savedInstanceState?.let {
             currentRoll = it.getInt(CURRENT_ROLL)
         }
-        dieViewModel = ViewModelProvider(this)[DieViewModel::class.java]
+        dieViewModel = ViewModelProvider(requireActivity())[DieViewModel::class.java]
     }
 
 
@@ -45,22 +45,12 @@ class DieFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        dieViewModel.getCurrentRoll().observe(viewLifecycleOwner){
+        dieViewModel.getCurrentRoll().observe(viewLifecycleOwner) {
             dieTextView.text = it.toString()
         }
 
         if (dieViewModel.getCurrentRoll().value == null)
-            throwDie()
-    }
-
-    fun throwDie() {
-        dieViewModel.setCurrentRoll(Random.nextInt(dieSides) + 1)
-        dieTextView.text = currentRoll.toString()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        currentRoll?.let { outState.putInt(CURRENT_ROLL, it) }
+            dieViewModel.rollDie()
     }
 
     companion object {

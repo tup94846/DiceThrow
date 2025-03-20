@@ -8,8 +8,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentContainer
 import androidx.fragment.app.FragmentContainerView
+import androidx.lifecycle.ViewModelProvider
 
 class MainActivity : AppCompatActivity() {
+
+    val dieViewModel : DieViewModel by lazy {
+        ViewModelProvider(this)[DieViewModel::class.java]
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -26,9 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         val rollButton: Button = findViewById(R.id.rollButton)
         rollButton.setOnClickListener {
-            // Roll both dice
-            dieFragment1.throwDie()
-            dieFragment2.throwDie()
+            dieViewModel.rollDie()
         }
     }
 }
